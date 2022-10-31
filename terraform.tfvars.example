@@ -1,0 +1,20 @@
+aws_access_key = "...................."
+aws_secret_key = "........................................"
+
+# playground.staging
+f5xc_api_url      = "https://playground.staging.volterra.us/api"
+f5xc_api_ca_cert  = "/Users/mwiget/.ves-internal/staging/cacerts/public_server_ca.crt"
+f5xc_api_p12_file = "/Users/mwiget/playground.staging.api-creds.p12"
+f5xc_tenant       = "playground-........"
+f5xc_api_token    = "............................"
+
+# playground.prod
+# f5xc_api_url      = "https://playground.staging.volterra.us/api"
+# f5xc_api_p12_file = "/Users/mwiget/playground.staging.api-creds.p12"
+# f5xc_tenant       = "playground-........"
+# f5xc_api_token    = "............................"
+
+project_prefix    = "mw"
+ssh_public_key    = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGQgmCdK9tbjvfnx417pwhyFhphJUEGsn43bFwjkP6pt mwiget@m1.local"
+bastion_cidr      = "212.51.142.28/32"
+
