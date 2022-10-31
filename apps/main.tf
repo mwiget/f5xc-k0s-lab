@@ -69,7 +69,7 @@ resource "volterra_http_loadbalancer" "lb" {
         port = var.advertise_port
         site {
           ip = var.advertise_vip
-          network = "SITE_NETWORK_INSIDE"
+          network = "SITE_NETWORK_OUTSIDE"
           site {
             name      = advertise_where.value
             namespace = "system"
