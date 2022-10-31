@@ -20,11 +20,11 @@ Each site creates the following topology for the kubernetes sites CE and the wor
 :  :    +----+    :     |   IGW    |  :   
 :  :    | WL |----------|          |  :      
 :  :    +----+    :     +----------+  :
-:   ..............                    :
+:   ..... AZ .....                    :
 .......................................
 ```
 
-Workload and CE VM use the default route to Internet via IGW and get specific routes for custom VIP available
+Workload and CE VM are deployed in a subnet assigned to an availability zone (AZ) use the default route to Internet via IGW and get specific routes for custom VIP available
 on the CE Loadbalancer. A nginx based web server is installed on the Workload VM and serves a welcome page on port 8080.
 
 ssh access to CE and WL is available for username `core`.
