@@ -83,6 +83,9 @@ resource "volterra_site_state" "decommission_when_delete" {
   depends_on = [volterra_registration_approval.ce]
 }
 
+output "site_name" {
+  value = var.site_name
+}
 output "ce_public_ip" {
   value = aws_instance.ce.public_ip
 }

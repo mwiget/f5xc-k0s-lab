@@ -34,6 +34,27 @@ module "aws-site-region-a" {
   }
 }
 
+module "apps-site-region-a" {
+  depends_on        = [module.aws-site-region-a]
+  count             = 1
+  source            = "./apps"
+  domains           = ["workload.site2"]
+  origin_port       = 8080
+  #f5xc_tenant       = var.f5xc_tenant
+  apps_name         = format("%s-aws-app-%d", var.project_prefix, count.index)
+  advertise_port    = 80
+  namespace         = module.namespace.namespace["name"]
+  origin_servers = {
+    module.aws-site-region-a[count.index]["site_name"]: { ip = module.aws-site-region-a[count.index].workload_private_ip },
+    module.aws-site-region-a[count.index+1]["site_name"]: { ip = module.aws-site-region-a[count.index+1].workload_private_ip }
+  }
+  advertise_vip   = "10.64.15.254"
+  advertise_sites = module.aws-site-region-a[*]["site_name"]
+  providers       = {
+    volterra = volterra.default
+  }
+}
+
 module "namespace" {
   source              = "./modules/f5xc/namespace"
   f5xc_namespace_name = format("%s-k0s-lab", var.project_prefix)
@@ -92,4 +113,8 @@ output "aws-vpc-region-a" {
 
 output "aws-site-region-a" {
   value = module.aws-site-region-a
+}
+
+output "apps-site-region-a" {
+  value = module.apps-site-region-a
 }
