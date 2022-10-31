@@ -34,7 +34,8 @@ ssh access to CE and WL is available for username `core`.
 - Copy terraform.tfvars.example to terraform.tfvars and set the AWS, F5 XC and ssh credentials etc.
 - Set the desired regions and number of sites per region in main.tf
 
-Then run Terraform as usual
+Then run Terraform as usual. Terraform manifest takes care of creating the AWS VPC, Subnet and IGW plus site token, namespace, site registration, virtual site, 
+site mesh group and application LB and origin pool for the nginx webserver in the workload VM.
 
 ```
 terraform plan
