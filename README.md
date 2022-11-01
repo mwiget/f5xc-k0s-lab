@@ -24,8 +24,8 @@ Each site creates the following topology for the kubernetes sites CE and the wor
 .......................................
 ```
 
-Workload and CE VM are deployed in a subnet assigned to an availability zone (AZ) use the default route to Internet via IGW and get specific routes for custom VIP available
-on the CE Loadbalancer. A nginx based web server is installed on the Workload VM and serves a welcome page on port 8080.
+Workload and CE VM are deployed in a subnet assigned to an availability zone (AZ) use the default route to Internet via IGW.
+A nginx based web server is installed on the Workload VM and serves a welcome page on port 8080.
 
 ssh access to CE and WL is available for username `core`.
 
@@ -43,3 +43,8 @@ terraform apply
 ```
 
 Site deployment time < 10 minutes
+
+## Limitation
+
+- custom VIP isn't exposed yet externally, route to CE is missing and routing within the CE from the VM interface to ver is missing (k0s uses kube-router, so this can be enabled
+via BGP peering between k0s and CE.
