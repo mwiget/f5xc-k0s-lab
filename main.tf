@@ -38,9 +38,8 @@ module "apps-site-region-a" {
   depends_on        = [module.aws-site-region-a]
   count             = 1
   source            = "./apps"
-  domains           = ["workload.site2"]
+  domains           = ["workload.site1"]
   origin_port       = 8080
-  #f5xc_tenant       = var.f5xc_tenant
   apps_name         = format("%s-aws-app-%d", var.project_prefix, count.index)
   advertise_port    = 80
   namespace         = module.namespace.namespace["name"]
