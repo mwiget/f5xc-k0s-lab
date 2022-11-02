@@ -23,6 +23,7 @@ resource "aws_instance" "ce" {
     var.security_group_id,
   ]
   subnet_id               = aws_subnet.k0s_subnet.id
+  source_dest_check       = false
   associate_public_ip_address = true
 
   root_block_device {
