@@ -39,6 +39,7 @@ storage:
           #!/usr/bin/env sh
           echo "download and install k0s ..."
           curl -sSLf https://get.k0s.sh | K0S_VERSION=v1.24.6+k0s.0 sh
+          #curl -sSLf https://get.k0s.sh | K0S_VERSION=v1.23.12+k0s.0 sh
           /usr/local/bin/k0s install controller --single --config /usr/local/etc/k0s.yaml
           /usr/local/bin/k0s start
           ln -s /usr/local/bin/k0s /usr/local/bin/kubectl
@@ -122,7 +123,7 @@ storage:
                 serviceAccountName: volterra-sa
                 containers:
                 - name: volterra-ce-init
-                  image: docker.io/volterraio/volterra-ce-init 
+                  image: gcr.io/volterraio/volterra-ce-init
                   volumeMounts:
                   - name: hostroot 
                     mountPath: /host
@@ -150,6 +151,16 @@ storage:
             verbs: ["*"]
           ---
           apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRole
+          metadata:
+            name: vpm-cluster-role
+            namespace: ves-system
+          rules:
+          - apiGroups: [""]
+            resources: ["nodes"]
+            verbs: ["get", "list"]
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
           kind: RoleBinding
           metadata:
             name: vpm-role-binding
@@ -163,6 +174,19 @@ storage:
             kind: Role
             name: vpm-role
             apiGroup: rbac.authorization.k8s.io
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRoleBinding
+          metadata:
+            name: vpm-sa
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: vpm-cluster-role
+          subjects:
+          - kind: ServiceAccount
+            name: vpm-sa
+            namespace: ves-system
           ---
           apiVersion: rbac.authorization.k8s.io/v1
           kind: ClusterRoleBinding
@@ -189,11 +213,11 @@ storage:
               ClusterName: ${cluster_name}
               ClusterType: ce
               Config: /etc/vpm/config.yaml
-              DisableModules: ["dictator", "recruiter"]
-              # CHANGE ME (don't set for auto-assign)
-              # Latitude: 
-              # CHANGE ME (don't set for auto-assign)
-              # Longitude:
+              DisableModules: ["recruiter"]
+              # CHANGE ME
+              # Latitude: <latitude>
+              # CHANGE ME
+              # Longitude: <longitude>
               Labels: 
                 ${site_label}
               MauriceEndpoint: https://register.staging.volterra.us
@@ -222,6 +246,16 @@ storage:
                   statefulset: vp-manager
               spec:
                 serviceAccountName: vpm-sa
+                affinity:
+                  podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                    - labelSelector:
+                        matchExpressions:
+                        - key: name
+                          operator: In
+                          values:
+                          - vpm
+                      topologyKey: kubernetes.io/hostname
                 initContainers:
                 - name : vpm-init-config
                   image: busybox
@@ -237,7 +271,7 @@ storage:
                   - "cp /tmp/config.yaml /etc/vpm"
                 containers:
                 - name: vp-manager 
-                  image: docker.io/volterraio/vpm
+                  image: gcr.io/volterraio/vpm
                   imagePullPolicy: Always
                   volumeMounts:
                   - name: etcvpm
@@ -297,6 +331,8 @@ storage:
             - protocol: TCP
               port: 65003
               targetPort: 65003
+          # CHANGE ME
+          # PLEASE UNCOMMENT TO ENABLE SITE TO SITE ACCESS VIA NODEPORT
           ---
           apiVersion: v1
           kind: Service
@@ -315,4 +351,39 @@ storage:
                 nodePort: 30500
             selector:
               statefulset.kubernetes.io/pod-name: ver-0
-
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: ver-nodeport-ver-1
+            namespace: ves-system
+            labels:
+              app: ver
+          spec:
+            type: NodePort
+            ports:
+              - name: "ver-ike"
+                protocol: UDP
+                port: 4500
+                targetPort: 4500
+                nodePort: 30501
+            selector:
+              statefulset.kubernetes.io/pod-name: ver-1
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: ver-nodeport-ver-2
+            namespace: ves-system
+            labels:
+              app: ver
+          spec:
+            type: NodePort
+            ports:
+              - name: "ver-ike"
+                protocol: UDP
+                port: 4500
+                targetPort: 4500
+                nodePort: 30502
+            selector:
+              statefulset.kubernetes.io/pod-name: ver-2
