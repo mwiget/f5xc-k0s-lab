@@ -48,6 +48,11 @@ variable "f5xc_tenant" {
   type        = string
 }
 
+variable "f5xc_api_p12_file" {
+  type = string
+  default = ""
+}
+
 variable "site_token" {
   type        = string
 }

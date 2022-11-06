@@ -71,7 +71,7 @@ resource "volterra_registration_approval" "ce" {
   cluster_name  = var.site_name
   hostname      = "vp-manager-0"
   cluster_size  = 1
-  retry = 30
+  retry = 25
   wait_time = 30
 }
 

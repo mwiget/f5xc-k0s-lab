@@ -26,10 +26,10 @@ module "aws-site-region-a" {
   f5xc_tenant       = var.f5xc_tenant
   f5xc_api_token    = var.f5xc_api_token
   f5xc_api_url      = var.f5xc_api_url
+  f5xc_api_p12_file = var.f5xc_api_p12_file
   site_token        = resource.volterra_token.token.id
   owner_tag         = var.owner_tag
   providers         = {
-    volterra = volterra.default,
     aws      = aws.eu-north-1
   }
 }
@@ -45,21 +45,20 @@ module "apps-site-region-a" {
   namespace         = module.namespace.namespace["name"]
   origin_servers = {
     module.aws-site-region-a[count.index]["site_name"]: { ip = module.aws-site-region-a[count.index].workload_private_ip },
-    module.aws-site-region-a[count.index+1]["site_name"]: { ip = module.aws-site-region-a[count.index+1].workload_private_ip }
+   module.aws-site-region-a[count.index+1]["site_name"]: { ip = module.aws-site-region-a[count.index+1].workload_private_ip }
   }
   advertise_vip   = "10.64.15.254"
   advertise_sites = module.aws-site-region-a[*]["site_name"]
-  providers       = {
-    volterra = volterra.default
-  }
+  f5xc_tenant       = var.f5xc_tenant
+  f5xc_api_token    = var.f5xc_api_token
+  f5xc_api_url      = var.f5xc_api_url
+  f5xc_api_p12_file = var.f5xc_api_p12_file
+  site_token        = resource.volterra_token.token.id
 }
 
 module "namespace" {
   source              = "./modules/f5xc/namespace"
   f5xc_namespace_name = format("%s-k0s-lab", var.project_prefix)
-  providers           = {
-    volterra = volterra.default
-  }
 }
 
 module "virtual_site" {
@@ -68,9 +67,6 @@ module "virtual_site" {
   f5xc_virtual_site_name                = format("%s-k0s-vsite", var.project_prefix)
   f5xc_virtual_site_type                = "CUSTOMER_EDGE"
   f5xc_virtual_site_selector_expression = [ format("vsite in (%s-k0s)", var.project_prefix) ]
-  providers                             = {
-    volterra = volterra.default
-  }
 }
 
 module "smg" {
@@ -80,9 +76,6 @@ module "smg" {
   f5xc_virtual_site_name           = module.virtual_site.virtual-site["name"]
   f5xc_site_mesh_group_name        = format("%s-k0s-smg", var.project_prefix)
   f5xc_site_2_site_connection_type = "full_mesh"
-  providers                        = {
-    volterra = volterra.default
-  }
 }
 
 resource "volterra_token" "token" {

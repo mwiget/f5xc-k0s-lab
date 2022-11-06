@@ -6,6 +6,44 @@ variable "origin_port" {
   default = 8080
 }
 
+variable "f5xc_api_url" {       
+  type = string
+}
+
+variable "f5xc_api_cert" {
+  type = string
+  default = ""
+}
+
+variable "f5xc_api_p12_file" {
+  type = string
+  default = ""
+}
+
+variable "f5xc_api_key" {
+  type = string
+  default = ""
+}
+
+variable "f5xc_api_ca_cert" {
+  type = string
+  default = ""
+}
+
+variable "f5xc_api_token" {
+  type = string
+  default = ""
+}
+
+variable "f5xc_tenant" {
+  type = string
+  default = ""
+}
+
+variable "site_token" {
+  type        = string
+}
+
 variable "advertise_port" {
   type = number
   default = 80

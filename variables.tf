@@ -1,7 +1,5 @@
 # Variables for AWS infrastructure module
 
-// TODO - use null defaults
-
 # Required
 variable "aws_access_key" {
   type        = string
