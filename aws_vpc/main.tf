@@ -72,6 +72,9 @@ resource "aws_security_group" "allow_traffic" {
 output "vpc" {
   value = resource.aws_vpc.site
 }
+output "internet_gateway" {
+  value = resource.aws_internet_gateway.k0s_gateway
+}
 output "route_table" {
   value = resource.aws_route_table.k0s_route_table
 }

@@ -18,8 +18,10 @@ module "aws-site-region-a" {
   aws_az            = [ "a" , "b" ][count.index % 2]
   vpc_id            = module.aws-vpc-region-a[0].vpc.id
   route_table_id    = module.aws-vpc-region-a[0].route_table.id
+  internet_gateway_id = module.aws-vpc-region-a[0].internet_gateway.id
   security_group_id = module.aws-vpc-region-a[0].security_group.id
   subnet_cidr       = format("10.64.%d.0/24", count.index % 256)
+  custom_vip_cidr   = "10.64.15.254/32"
   bastion_cidr      = var.bastion_cidr
   ssh_public_key    = var.ssh_public_key
   site_label        = format("vsite: %s-k0s", var.project_prefix)

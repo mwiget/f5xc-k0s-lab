@@ -39,7 +39,7 @@ storage:
           #!/usr/bin/env sh
           echo "download and install k0s ..."
           curl -sSLf https://get.k0s.sh | K0S_VERSION=v1.24.6+k0s.0 sh
-          #curl -sSLf https://get.k0s.sh | K0S_VERSION=v1.23.12+k0s.0 sh
+          # curl -sSLf https://get.k0s.sh | K0S_VERSION=v1.23.12+k0s.0 sh
           /usr/local/bin/k0s install controller --single --config /usr/local/etc/k0s.yaml
           /usr/local/bin/k0s start
           ln -s /usr/local/bin/k0s /usr/local/bin/kubectl
@@ -48,6 +48,41 @@ storage:
           /usr/local/bin/k0s kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
           echo "set up F5 XC CE .."
           /usr/local/bin/k0s kubectl apply -f /usr/local/etc/ce_ver.yaml
+          /usr/local/bin/k0s kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+          #/usr/local/bin/k0s kubectl apply -f /usr/local/etc/metallb-vip.yaml
+    - path: /usr/local/etc/metallb-vip.yaml
+      mode: 0644
+      contents:
+        inline: |
+          apiVersion: metallb.io/v1beta1
+          kind: IPAddressPool
+          metadata:
+            name: custom-vip-pool
+            namespace: metallb-system
+          spec:
+            addresses:
+            - 10.64.15.254/32
+          ---
+          apiVersion: metallb.io/v1beta1
+          kind: L2Advertisement
+          metadata:
+            name: l2-metallb
+            namespace: metallb-system
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: custom-vip-pool
+            namespace: ves-system
+            annotations:
+              metallb.universe.tf/address-pool: custom-vip-pool
+          spec:
+            ports:
+            - port: 80
+              targetPort: 80
+            selector:
+              app: ver-0
+            type: LoadBalancer
     - path: /usr/local/bin/getk9s
       mode: 0755
       contents:
@@ -57,7 +92,7 @@ storage:
           mkdir -p /root/.kube
           /usr/local/bin/k0s kubeconfig admin > /root/.kube/config
     - path: /usr/local/etc/k0s.yaml
-      mode: 0755
+      mode: 0644
       contents:
         inline: |
           spec:
@@ -65,7 +100,7 @@ storage:
               storage:
                 type: openebs_local_storage
     - path: /usr/local/etc/ce_ver.yaml
-      mode: 0755
+      mode: 0644
       contents:
         inline: |
           apiVersion: v1
