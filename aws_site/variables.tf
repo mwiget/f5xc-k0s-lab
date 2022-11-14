@@ -10,6 +10,11 @@ variable "aws_az" {
   type        = string
 }
 
+variable "internet_gateway_id" {
+  type        = string
+  default     = ""
+}
+
 variable "route_table_id" {
   type        = string
   default     = ""
@@ -31,6 +36,10 @@ variable "vpc_cidr" {
 }
 
 variable "subnet_cidr" {
+  type        = string
+}
+
+variable "custom_vip_cidr" {
   type        = string
 }
 

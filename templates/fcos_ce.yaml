@@ -48,7 +48,7 @@ storage:
           /usr/local/bin/k0s kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
           echo "set up F5 XC CE .."
           /usr/local/bin/k0s kubectl apply -f /usr/local/etc/ce_ver.yaml
-          /usr/local/bin/k0s kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+          #/usr/local/bin/k0s kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
           #/usr/local/bin/k0s kubectl apply -f /usr/local/etc/metallb-vip.yaml
     - path: /usr/local/etc/metallb-vip.yaml
       mode: 0644
