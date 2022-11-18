@@ -12,6 +12,17 @@ passwd:
     - ${ssh_public_key}
 systemd:
   units:
+  - name: custom-vip.service
+    enabled: true
+    contents: |
+      [Unit]
+      Description=custom vip route
+      After=network-online.target
+      Wants=network-online.target
+      [Service]
+      ExecStart=/usr/local/bin/add-custom-vip-route.sh ${custom_vip_cidr}
+      [Install]
+      WantedBy=multi-user.target
   - name: run-k0s-installer.service
     enabled: true
     contents: |
@@ -32,6 +43,29 @@ systemd:
       WantedBy=default.target
 storage:
   files:
+    - path: /usr/local/bin/add-custom-vip-route.sh
+      mode: 0755
+      contents:
+        inline: |
+          #!/bin/bash
+          vip=$1
+          test -z "$vip" && echo "Usage: $0 <vip>" && exit
+
+          while true; do
+            echo -n "waiting 5 secs ... "
+            sleep 5
+            verPodIp=$(kubectl -n ves-system get pod ver-0 --template '{{.status.podIP}}')
+            test -z "$verPodIp" && echo "waiting for pod ver-0 ..."
+            echo -n "verPodIP=$verPodIp "
+            if test -z "$(ip route show $vip via $verPodIp)"; then
+              echo -n "route missing, adding ..."
+              ip route del $vip
+              ip route add $vip via $verPodIp
+              echo ""
+            else
+              echo "route $vip via $verPodIp present"
+            fi
+          done
     - path: /usr/local/bin/run-k0s-installer
       mode: 0755
       contents:

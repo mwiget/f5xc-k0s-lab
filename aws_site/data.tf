@@ -11,7 +11,8 @@ data "ct_config" "config" {
     site_token = var.site_token, 
     cluster_name = var.site_name, 
     ssh_public_key = var.ssh_public_key,
-    site_label = var.site_label
+    site_label = var.site_label,
+    custom_vip_cidr = var.custom_vip_cidr
   })
   strict = true
 }

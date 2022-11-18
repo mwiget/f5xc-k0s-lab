@@ -44,8 +44,3 @@ terraform apply
 
 Site deployment time < 10 minutes
 
-## Limitation
-
-- custom VIP isn't exposed yet externally, route to CE is missing and routing within the CE from the VM interface to ver is missing (k0s uses kube-router, so this could eventually be enabled
-via BGP peering between k0s and CE or by adding a static route on CE for the custom VIP towards ver-0 pod).
-
