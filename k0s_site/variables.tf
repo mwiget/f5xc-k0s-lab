@@ -94,30 +94,3 @@ variable "f5xc_api_token" {
   default = ""
 }
 
-variable "ver_image" {
-  type    = map(string)
-  default = {
-    ca-central-1   = "ami-077bb9c847c6d9ef7"
-    af-south-1     = "ami-05d60209ebad1f70c"
-    ap-east-1      = "ami-0b9cab48b17de8415"
-    ap-northeast-2 = "ami-0c548676e9a27ce83"
-    ap-southeast-2 = "ami-00c8b3cc35d782bf7"
-    ap-south-1     = "ami-01a1a13f752b02d59"
-    ap-northeast-1 = "ami-03297d670703981c9"
-    ap-southeast-1 = "ami-05b28eabaf624a6bf"
-    eu-central-1   = "ami-0e99cef1d8e41d9e1"
-    eu-west-1      = "ami-09cf2c94b0d2ca355"
-    eu-west-3      = "ami-03175b50db858bc6b"
-    eu-south-1     = "ami-07386e2285d5dff8a"
-    eu-north-1     = "ami-0366c929eb2ac407b"    # updated
-    #eu-north-1     = "ami-048577c3054929b99"
-    eu-west-2      = "ami-094389688d488aeaa"
-    me-south-1     = "ami-031a36a354ddadff7"
-    sa-east-1      = "ami-0c5498aa41af80bfd"
-    us-east-1      = "ami-0fa4728603d6f753c"
-    us-east-2      = "ami-0eadac5d175627120"
-    us-west-1      = "ami-0da9d480ee4009846"
-    us-west-2      = "ami-0b0adddceaf57d93d"
-  }
-}
-

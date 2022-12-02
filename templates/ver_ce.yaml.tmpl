@@ -1,0 +1,34 @@
+#cloud-config
+ssh_authorized_keys:
+  - "${ssh_public_key}"
+write_files:
+- path: /etc/vpm/config.yaml
+  permissions: 0644
+  owner: root
+  content: |
+    Vpm:
+      ClusterName: ${cluster_name}
+      ClusterType: ce
+      Token: ${site_token}
+      PrivateNIC:
+      Labels:
+        ${site_label}
+      MauricePrivateEndpoint: https://register-tls.staging.volterra.us
+      MauriceEndpoint: https://register.staging.volterra.us
+      CertifiedHardwareEndpoint: https://vesio.blob.core.windows.net/releases/certified-hardware/aws.yml
+    Kubernetes:
+      EtcdUseTLS: True
+      Server: vip
+- path: /etc/hosts
+  permissions: 0644
+  owner: root
+  content: |
+    127.0.0.1   localhost
+    ::1         localhost
+    127.0.1.1   vip
+- path: /etc/systemd/resolved.conf
+  permissions: 0644
+  owner: root
+  content: |
+    [Resolve]
+    DNS=1.1.1.1

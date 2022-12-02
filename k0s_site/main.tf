@@ -35,16 +35,9 @@ resource "aws_route_table_association" "k0s_route_table_association" {
 }
 
 resource "aws_instance" "ce" {
-  ami                     = var.ver_image[var.aws_region]
+  ami                     = data.aws_ami.latest-fcos.id
   instance_type           = var.instance_type
-  iam_instance_profile    = aws_iam_instance_profile.instance_profile.id
-  user_data               = templatefile("./templates/ver_ce.yaml.tmpl", { 
-  site_token = var.site_token, 
-  cluster_name = var.site_name, 
-  ssh_public_key = var.ssh_public_key,
-  custom_vip_cidr = var.custom_vip_cidr,
-  site_label = var.site_label
-  })
+  user_data               = data.ct_config.config.rendered
   vpc_security_group_ids  = [
     var.security_group_id,
   ]
@@ -57,9 +50,8 @@ resource "aws_instance" "ce" {
   }
 
   tags = {
-    Name                                      = "${var.site_name}-ce"
-    Creator                                   = var.owner_tag
-    "kubernetes.io/cluster/${var.site_name}"  = "owned"
+    Name    = "${var.site_name}-ce"
+    Creator = var.owner_tag
   }
 }
 
@@ -96,7 +88,7 @@ module "site_wait_for_online" {
 resource "volterra_registration_approval" "ce" {
   depends_on    = [resource.aws_instance.ce]
   cluster_name  = var.site_name
-  hostname      = regex("[0-9A-Za-z_-]+", aws_instance.ce.private_dns)
+  hostname      = "vp-manager-0"
   cluster_size  = 1
   retry = 25
   wait_time = 30
@@ -127,14 +119,6 @@ output "workload_private_ip" {
   value = aws_instance.workload.private_ip
 }
 
-output "workload" {
-value = aws_instance.workload
-}
-
 output "ce" {
 value = aws_instance.ce
-}
-
-output "ce_hostname" {
-  value = regex("[0-9A-Za-z_-]+", aws_instance.ce.private_dns)
 }

@@ -25,6 +25,16 @@ storage:
   directories:
   - path: /etc/nginx
   files:
+  - path: /usr/local/bin/shellwrk
+    mode: 0755
+    contents:
+      inline: |
+        sudo grep -v workload /etc/hosts > /tmp/hosts
+        sudo echo "10.64.15.254 workload.remote" >> /tmp/hosts
+        sudo echo "10.64.15.254 workload.local" >> /tmp/hosts
+        sudo echo "10.64.15.254 workload.site1" >> /tmp/hosts
+        sudo cp /tmp/hosts /etc/
+        sudo docker run -ti --rm --name wrk --privileged --net host --pid host marcelwiget/wrk
   - path: /etc/nginx/index.html
     mode: 0444
     contents:
